@@ -1,398 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
+  <!DOCTYPE html>
+<html lang="ur" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hassan Birthday Countdown - Ultimate Advanced (Fixed Calendar)</title>
+    <title>خاص رات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- Root Variables & Fonts --- */
-        :root {
-            --primary-color: #e91e63; /* Pink/Red */
-            --primary-dark: #c2185b; /* Dark Pink/Red */
-            --secondary-color: #ffb300;
-            --text-light: #ffffff;
-            --text-dark: #333333;
-            --font-family: 'Montserrat', sans-serif;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --hassan-bg: #ffffff; 
-            --hassan-text: #000000;
-            --calendar-day-bg: #f9f9f9;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
-
-        /* --- Global Fixes & Stability --- */
-        * { box-sizing: border-box; }
-        body {
-            font-family: var(--font-family);
-            background-color: #000000;
-            color: var(--text-dark);
+        * {
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', serif;
             min-height: 100vh;
-            text-align: center;
+            background: linear-gradient(135deg, #000000 0%, #1a0033 25%, #330066 50%, #1a0033 75%, #000000 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             overflow-x: hidden;
-            overflow-y: auto;
-            position: relative;
         }
 
-        /* --- Background Stars (Dynamic) --- */
-        .stars {
-            position: fixed;
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header Styles */
+        header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 1px, transparent 1.5px),
-                        radial-gradient(circle at 70% 80%, rgba(255,255,255,0.7) 1px, transparent 1.5px),
-                        radial-gradient(circle at 40% 50%, rgba(255,255,255,0.9) 0.5px, transparent 1px);
-            background-size: 150px 150px; 
-            opacity: 0.8;
-            animation: moveStars 50s linear infinite; 
-            z-index: 0;
-        }
-        @keyframes moveStars {
-            from { background-position: 0 0; }
-            to { background-position: 100% 100%; }
+            z-index: 100;
         }
 
-        /* --- General Layout & Card Styles --- */
-        .card-wrapper { 
-            display: flex; 
-            justify-content: center; 
-            align-items: stretch; /* Ensures equal height for desktop */
-            width: 95%; 
-            max-width: 950px; 
-            z-index: 10; 
-            margin: 20px 0 30px 0; 
-            gap: 20px; 
-        }
-        .main-card { 
-            background-color: var(--card-bg); 
-            border-radius: 10px; 
-            box-shadow: 0 10px 40px rgba(233, 30, 99, 0.5); 
-            border: 2px solid var(--primary-color); 
-            padding: 30px; 
-            text-align: center; 
-            flex-grow: 1; 
-            flex-basis: 50%; /* Explicitly setting width basis */
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-        }
-
-        /* --- Countdown Card Styles (Unchanged for height stability) --- */
-        .counter-card h1 { color: var(--primary-dark); font-size: 2.2em; margin-bottom: 5px; font-weight: 900; }
-        .counter-card p.target-date { color: var(--text-dark); font-size: 1.1em; margin-bottom: 30px; border-bottom: 2px dashed var(--primary-color); padding-bottom: 10px; font-weight: 700; }
-        .timer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; max-width: 350px; margin-left: auto; margin-right: auto; }
-        .value-wrapper { background-color: var(--primary-color); padding: 15px 10px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); margin-bottom: 5px; }
-        .value { font-family: 'Roboto Mono', monospace; font-size: 2.8em; font-weight: 700; line-height: 1.1; color: var(--text-light); }
-        .label { font-size: 0.8em; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); }
-        
-        /* --- Calendar Card Styles (FIXED) --- */
-        .calendar-header { 
-            color: var(--text-light); 
-            font-size: 1.8em; 
-            font-weight: 900; 
-            margin-bottom: 15px; 
-            background-color: var(--primary-dark); 
-            padding: 10px 0; 
-            border-radius: 8px; 
-        }
-        .calendar-grid { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr); 
-            gap: 2px; 
-            text-align: center; 
-            flex-grow: 1; /* Allows grid to take up full available vertical space */
-            padding: 5px; 
-            grid-auto-rows: 1fr; /* **NEW: Ensures equal height for each date row** */
-            align-content: space-around; 
-        }
-        .day-label { 
-            color: var(--primary-dark); 
-            text-transform: uppercase; 
-            font-size: 0.75em; 
-            font-weight: 700; 
-            padding: 5px 0; 
-        }
-        .date-cell { 
-            font-family: var(--font-family); 
-            color: var(--text-dark); 
-            font-size: 1em; 
-            padding: 8px 0; 
-            border-radius: 4px; 
-            background-color: var(--calendar-day-bg); 
-            font-weight: 600; 
-            /* **NEW:** Flex properties to center text vertically inside the cell's space */
+        .header-text {
+            color: white;
+            font-size: clamp(16px, 3vw, 24px);
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-family: Arial, sans-serif;
         }
-        .empty-cell { background: none; border: none; }
-        .bold-date { font-weight: 900; background-color: #e0e0e0; color: var(--primary-dark); }
 
-        /* --- Footer Button, Pop-up, Animation (Other elements remain the same) --- */
-        .footer-credit { margin-top: 20px; margin-bottom: 30px; text-align: center; z-index: 10; }
-        #credit-btn { padding: 15px 40px; background-color: var(--hassan-bg); color: var(--hassan-text); border: none; border-radius: 50px; font-size: 1.1em; font-weight: 900; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.2s ease-in-out; letter-spacing: 1px; text-transform: uppercase; }
-        #credit-btn:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); transform: translateY(-2px); }
+        .header-heart {
+            display: inline-block;
+            color: #ff0066;
+            font-size: clamp(20px, 4vw, 32px);
+            animation: heartbeat 1.5s ease-in-out infinite, glow 2s ease-in-out infinite;
+        }
 
-        /* --- Post-Countdown Section --- */
-        #finished-section { display: flex; flex-direction: column; align-items: center; }
-        #celebrate-btn {
-            padding: 15px 30px;
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2em;
+        /* Main Content */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+            padding: 20px;
+        }
+
+        .text-container {
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .urdu-text {
+            color: white;
+            font-size: clamp(32px, 6vw, 64px);
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 15px;
+            line-height: 1.8;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 0, 110, 0.2);
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* --- Pop-up Card Styles --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
-        .birthday-card { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: var(--text-light); padding: 40px; border-radius: 20px; box-shadow: 0 10px 50px rgba(255, 255, 255, 0.3); max-width: 400px; text-align: center; transform: scale(0.8); opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .birthday-card.show { transform: scale(1); opacity: 1; }
-        .birthday-card h2 { font-size: 2.5em; margin-bottom: 10px; color: var(--secondary-color); text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); }
-        .birthday-card p { font-size: 1.2em; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
-        .birthday-card button { background-color: var(--secondary-color); color: var(--text-dark); padding: 10px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; }
 
-        /* --- Animation Styles --- */
-        .animation-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
-        .confetti, .heart { position: absolute; width: 10px; height: 10px; opacity: 0; animation: fall linear forwards; font-size: 15px; }
-        .heart { font-size: 20px; }
-        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0.8; } }
+        .line {
+            display: block;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease forwards;
+        }
 
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 900px) {
-            .main-card { flex-basis: auto; margin: 0; padding: 20px; flex-grow: 0; width: 100%; max-width: none; }
-            .card-wrapper { flex-direction: column; align-items: center; gap: 20px; width: 100%; padding: 0 10px; }
-            .timer-grid { grid-template-columns: repeat(4, 1fr); max-width: none; }
+        .line:nth-child(1) {
+            animation-delay: 0.5s;
+        }
+
+        .line:nth-child(2) {
+            animation-delay: 1.5s;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Decorative Elements */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-text {
+            color: white;
+            font-size: clamp(16px, 3vw, 24px);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .heart {
+            display: inline-block;
+            color: #ff0066;
+            font-size: clamp(20px, 4vw, 32px);
+            animation: heartbeat 1.5s ease-in-out infinite, glow 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 5px #ff0066) drop-shadow(0 0 10px #ff0066);
+            }
+            50% { 
+                filter: drop-shadow(0 0 10px #ff0066) drop-shadow(0 0 20px #ff0066) drop-shadow(0 0 30px #ff0066);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .main-content {
+                min-height: calc(100vh - 200px);
+            }
+
+            footer {
+                position: relative;
+                margin-top: 40px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="stars"></div>
+    <!-- Stars Background -->
+    <div id="stars-container"></div>
 
-    <div class="card-wrapper">
-        
-        <div class="main-card counter-card">
-            <div>
-                <h1>Hassan Birthday 🎂</h1>
-                <p class="target-date">Surprise: 14 November 2026</p>
-                
-                <div id="timer-display" class="timer-grid">
-                    <div class="timer-box">
-                        <div class="value-wrapper">
-                            <div id="days" class="value">00</div>
-                        </div>
-                        <div class="label">Days</div>
-                    </div>
-                    <div class="timer-box">
-                        <div class="value-wrapper">
-                            <div id="hours" class="value">00</div>
-                        </div>
-                        <div class="label">Hours</div>
-                    </div>
-                    <div class="timer-box">
-                        <div class="value-wrapper">
-                            <div id="minutes" class="value">00</div>
-                        </div>
-                        <div class="label">Minutes</div>
-                    </div>
-                    <div class="timer-box">
-                        <div class="value-wrapper">
-                            <div id="seconds" class="value">00</div>
-                        </div>
-                        <div class="label">Seconds</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="finished-section" style="display: none;">
-                <div id="finished-message">
-                    🥳 Mission Complete! Happy Birthday Hassan! 🎉
-                </div>
-                <button id="celebrate-btn" onclick="openBirthdayCard()">
-                    🎉 OPEN SURPRISE CARD 🎉
-                </button>
-                <button id="replay-confetti-btn" onclick="startCelebration()" style="margin-top: 10px;">
-                    ✨ Replay Confetti ✨
-                </button>
-            </div>
+    <!-- Header -->
+    <header>
+        <div class="header-text">
+            <span>My favorite Khatoon Fiza</span>
+            <span class="header-heart">❤</span>
         </div>
+    </header>
 
-        <div class="main-card calendar-card">
-            <div class="calendar-header">
-                January 2026
-            </div>
-            <div class="calendar-grid">
-                <div class="day-label">Sun</div>
-                <div class="day-label">Mon</div>
-                <div class="day-label">Tue</div>
-                <div class="day-label">Wed</div>
-                <div class="day-label">Thu</div>
-                <div class="day-label">Fri</div>
-                <div class="day-label">Sat</div>
-
-                <div class="empty-cell"></div> <div class="empty-cell"></div> <div class="empty-cell"></div> <div class="empty-cell"></div> <div class="date-cell">1</div> <div class="date-cell">2</div> <div class="date-cell">3</div> <div class="date-cell">4</div> <div class="date-cell">5</div>
-                <div class="date-cell">6</div>
-                <div class="date-cell">7</div>
-                <div class="date-cell">8</div>
-                <div class="date-cell">9</div>
-                <div class="date-cell">10</div>
-                
-                <div class="date-cell bold-date">11</div> <div class="date-cell">12</div>
-                <div class="date-cell">13</div>
-                <div class="date-cell">14</div>
-                <div class="date-cell">15</div>
-                <div class="date-cell">16</div>
-                <div class="date-cell">17</div>
-                
-                <div class="date-cell">18</div>
-                <div class="date-cell">19</div>
-                <div class="date-cell">20</div>
-                <div class="date-cell">21</div>
-                <div class="date-cell">22</div>
-                <div class="date-cell">23</div>
-                <div class="date-cell">24</div>
-                
-                <div class="date-cell">25</div>
-                <div class="date-cell">26</div>
-                <div class="date-cell">27</div>
-                <div class="date-cell">28</div>
-                <div class="date-cell">29</div>
-                <div class="date-cell">30</div>
-                <div class="date-cell">31</div> </div>
-        </div>
-        
-    </div> <div class="footer-credit">
-        <button id="credit-btn">Made by Hassan</button>
-    </div>
-
-    <div id="animation-overlay" class="animation-overlay"></div>
-
-    <div id="birthday-modal" class="modal-overlay" onclick="closeBirthdayCard()">
-        <div class="birthday-card" id="birthday-card-content" onclick="event.stopPropagation()">
-            <h2>🎉 Happy Birthday, Dear Hassan! 🎁</h2>
-            <p>
-                May your day be filled with joy, success, and endless coding breakthroughs! 🚀 Keep shining bright! ✨
-            </p>
-            <p>Lots of love and best wishes! ❤️</p>
-            <button onclick="closeBirthdayCard()">Close</button>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="text-container">
+            <h1 class="urdu-text">
+                <span class="line" id="line1">پھر سے ایک خاص رات آنے کو ہے</span>
+                <span class="line" id="line2">یعنی پھر سے ہم اسے دعاؤں میں مانگیں گے</span>
+            </h1>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            <span>Hassan always love his Fiza</span>
+            <span class="heart">❤</span>
+        </div>
+    </footer>
 
     <script>
-        // Target Date: 11 January 2026, 00:00:00 PKT
-        const targetDatePKTString = "November 14, 2026 00:00:00 GMT+0500";
-        const targetDate = new Date(targetDatePKTString).getTime();
-
-        const daysContainer = document.querySelector('#days');
-        const hoursContainer = document.querySelector('#hours');
-        const minutesContainer = document.querySelector('#minutes');
-        const secondsContainer = document.querySelector('#seconds');
-        const timerDisplay = document.querySelector('.counter-card .timer-grid');
-        const finishedSection = document.getElementById('finished-section');
-        const animationOverlay = document.getElementById('animation-overlay');
-        const birthdayModal = document.getElementById('birthday-modal');
-        const birthdayCardContent = document.getElementById('birthday-card-content');
-        
-        const second = 1000;
-        const minute = second * 60;
-        const hour = minute * 60;
-        const day = hour * 24;
-
-        function formatNumber(num) {
-            return num < 10 ? '0' + num : num;
-        }
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                timerDisplay.style.display = 'none';
-                finishedSection.style.display = 'flex';
-                
-                daysContainer.textContent = '00';
-                hoursContainer.textContent = '00';
-                minutesContainer.textContent = '00';
-                secondsContainer.textContent = '00';
-                
-                startCelebration(); 
-                return;
-            }
-
-            const days = Math.floor(distance / day);
-            const hours = Math.floor((distance % day) / hour);
-            const minutes = Math.floor((distance % hour) / minute);
-            const seconds = Math.floor((distance % minute) / second);
-
-            daysContainer.textContent = formatNumber(days);
-            hoursContainer.textContent = formatNumber(hours);
-            minutesContainer.textContent = formatNumber(minutes);
-            secondsContainer.textContent = formatNumber(seconds);
-        }
-
-        window.startCelebration = function() {
-            animationOverlay.innerHTML = ''; 
-
-            const totalItems = 150; 
-            const colors = [
-                '#e91e63', '#ffb300', '#f44336', '#4caf50', '#03a9f4', '#ffffff'
-            ]; 
-
-            for (let i = 0; i < totalItems; i++) {
-                const item = document.createElement('div');
-                
-                if (Math.random() < 0.4) {
-                    item.className = 'heart';
-                    item.innerHTML = '&#10084;'; 
-                    item.style.color = '#e91e63'; 
-                } else {
-                    item.className = 'confetti';
-                    item.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    item.style.width = (Math.random() * 8 + 5) + 'px';
-                    item.style.height = (Math.random() * 15 + 5) + 'px';
-                }
-
-                item.style.left = Math.random() * 100 + 'vw';
-                item.style.animationDelay = Math.random() * 3 + 's';
-                item.style.animationDuration = Math.random() * 4 + 4 + 's';
-                
-                animationOverlay.appendChild(item);
+        // Create stars
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
             }
         }
 
-        window.openBirthdayCard = function() {
-            birthdayModal.style.display = 'flex';
-            setTimeout(() => {
-                birthdayCardContent.classList.add('show');
-            }, 10); 
-        }
-
-        window.closeBirthdayCard = function() {
-            birthdayCardContent.classList.remove('show');
-            setTimeout(() => {
-                birthdayModal.style.display = 'none';
-            }, 500); 
-        }
-
-        updateCountdown();
-        const countdownInterval = setInterval(updateCountdown, 1000); 
+        // Initialize
+        createStars();
     </script>
-
 </body>
-
 </html>
